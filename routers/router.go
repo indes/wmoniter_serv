@@ -10,5 +10,5 @@ func init() {
 	beego.Router("/rtime", &controllers.RtimeController{})
 	beego.Router("/historydata", &controllers.HistorydataController{})
 	beego.Router("/data", &controllers.DataController{})
-
+	beego.Router("/database",&controllers.DatabaseController{})
 }
