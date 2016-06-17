@@ -6,10 +6,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 
 	_ "fmt"
-	"fmt"
+	"math/rand"
 	"wmoniter_serv/models"
+	"time"
 )
-
 
 func init() {
 	orm.RegisterDriver("mysql", orm.DRMySQL)
@@ -40,19 +40,23 @@ func (c *MainController) Get() {
 	c.TplName = "index.tpl"
 }
 func (c *DatabaseController) Get() {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	o := orm.NewOrm()
 	o.Using("default")
 	orm.RunSyncdb("default", false, true)
 	c.Ctx.WriteString("123\n")
-	//user := new(Data)
-	//user.Id=1213
-	//user.Date=time.Now()
-	//user.Value = 213321213
-	//o.Insert(user)
-	u :=models.Data{Id: 6}
-	err := o.Read(&u)
-	fmt.Printf("ERR: %v\n", err)
-	c.Ctx.WriteString(u.Date.Format("2006-01-02 15:04:05:00"))
+	for i := 1; i <= 1000; i++ {
+		user := new(models.Data)
+		user.Id = 1213
+		user.Date = time.Now()
+		user.Value = r.Intn(10)
+		o.Insert(user)
+	}
+
+	//u :=models.Data{Id: 6}
+	//err := o.Read(&u)
+	//fmt.Printf("ERR: %v\n", err)
+	//c.Ctx.WriteString(u.Date.Format("2006-01-02 15:04:05:00"))
 
 }
 
@@ -64,7 +68,6 @@ func (c *HistorydataController) Get() {
 	c.TplName = "historydata.html"
 }
 func (c *DataController) Get() {
-	//c.Ctx.ResponseWriter.Header("Content-type: text/javascript;charset=UTF-8")
 	c.TplName = "data.tpl"
 }
 
