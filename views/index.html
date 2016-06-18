@@ -67,7 +67,7 @@
 
                 chart: {
                     type: 'spline',
-                    animation: Highcharts.svg, // don't animate in old IE
+                    animation: Highcharts.svg,
                     marginRight: 10,
                     events: {
                         load: function () {
@@ -148,27 +148,10 @@
                     }, {
                         color: '#f00'
                     }],
-                    data: (function () {
-                        // generate an array of random data
-                        var data = [],
-                                time = (new Date()).getTime(),
-                                i;
-
-                        for (i = -19; i <= 0; i++) {
-                            data.push({
-                                x: time + i * 1000,
-                                y: Math.random()
-                            });
-                        }
-                        return data;
-                    })()
+                    data: ({"x":12,"y":23})
                 }]
             });
         });
-//        $('#myTabs a').click(function (e) {
-//            e.preventDefault()
-//            $(this).tab('show')
-//        })
     });
 </script>
 </body>

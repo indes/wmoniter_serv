@@ -134,7 +134,7 @@
 //            }
 //        });
 
-        $.getJSON('/data', function (data) {
+        $.getJSON('/data/all', function (data) {
             $('#container').highcharts('StockChart', {
 
                 exporting: {
@@ -158,7 +158,7 @@
 
                 series : [{
                     name : '水位',
-                    data : data,
+                    data :data,
                     tooltip: {
                         valueDecimals: 2
                     }
