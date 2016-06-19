@@ -5,11 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>实时数据 | 水位监控平台</title>
-    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
     <link rel="stylesheet" href="static/css/style.css">
-    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
-    <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="//cdn.hcharts.cn/highcharts/highcharts.js"></script>
+    <script src="static/js/jquery.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/plugins/highcharts-zh_CN.js"></script>
+    <script src="static/js/highcharts.js"></script>
 
 
 </head>
@@ -67,17 +68,25 @@
 
                 chart: {
                     type: 'spline',
-                    animation: Highcharts.svg,
+                    animation: Highcharts.svg, // don't animate in old IE
                     marginRight: 10,
                     events: {
                         load: function () {
 
-                            // set up the updating of the chart each second
+                            // 每秒通过ajax获取新数据
                             var series = this.series[0];
                             setInterval(function () {
-                                var x = (new Date()).getTime(), // current time
-                                        y = Math.random();
-                                series.addPoint([x, y], true, true);
+                                $.getJSON('/dev/grtdata', function (data) {
+                                    console.log(data.x,data.y);
+                                    series.addPoint([data.x*1000, data.y], true, true);
+                                });
+
+                                //生成每秒随机数据
+                                // var x = (new Date()).getTime(),
+                                //     y = Math.random();
+                                // console.log(x,y);
+                                // series.addPoint([x, y], true, true);
+
                             }, 1000);
                         }
                     }
@@ -148,10 +157,26 @@
                     }, {
                         color: '#f00'
                     }],
-                    data: ({"x":12,"y":23})
+                    data: (function () {
+                        // 初始化20个数据点
+                        var data = [],
+                                time = (new Date()).getTime(),
+                                i;
+
+                        for (i = -19; i <= 0; i++) {
+                            data.push({
+                                x: time + i * 1000,
+                                // y: Math.random()
+                                y: 0
+                            });
+                        }
+                        console.log(data);
+                        return data;
+                    })()
                 }]
             });
         });
+
     });
 </script>
 </body>

@@ -33,7 +33,7 @@ func (c *DevController) GData() {
 
 func (c *DevController) GRtimedata() {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-
+	
 	datamap:=make(map[string]int64)
 	datamap["x"]=time.Now().Unix()
 	datamap["y"]=int64(r.Intn(10))

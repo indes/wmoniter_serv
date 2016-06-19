@@ -2,15 +2,13 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
 	_ "fmt"
 
 )
 
 func init() {
-	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", "root:root@(10.64.70.45:3306)/wmoniter?charset=utf8")
+
 }
 
 type MainController struct {
