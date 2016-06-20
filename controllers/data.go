@@ -4,17 +4,14 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
-	"fmt"
+	_ "fmt"
 	_ "math/rand"
 	"wmoniter_serv/models"
     _ "time"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func init() {
     orm.Debug = true
-	// orm.RegisterDriver("sqlite3", orm.DR_Sqlite)
-    // err:=orm.RegisterDataBase("default", "sqlite3", "file:database.db")
 	orm.RegisterDriver("mysql", orm.DRMySQL)
 	orm.RegisterDataBase("default", "mysql", "root:root@(localhost:3306)/wmoniter?charset=utf8")
 }
@@ -53,9 +50,7 @@ func (c *DatabaseController) Get() {
 	qs := o.QueryTable("data")
 	qs.All(&maps)
 	alldata:=[][]int64{}
-    for i,j:=range maps{
-        fmt.Println(i,j)
-		fmt.Println(j.Date.Unix())
+    for _,j:=range maps{
 		alldata=append(alldata,[]int64{j.Date.Unix(),int64(j.Value)})
     }
 	c.Data["json"]=&alldata

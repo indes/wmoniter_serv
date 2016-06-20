@@ -5,7 +5,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
-	"fmt"
+	_ "fmt"
 	"wmoniter_serv/models"
 	"strconv"
 )
@@ -81,7 +81,7 @@ func (c *MainController) History() {
 		c.Data["maxpagenums"]=(maplens/25)+1
 		maxpagenums=(maplens/25)+1
 	}
-	fmt.Println("最大页数",c.Data["maxpagenums"])
+	// fmt.Println("最大页数",c.Data["maxpagenums"])
 	if nowpn==0{
 		nowpn=nowpn+1
 	}
@@ -129,7 +129,6 @@ func (c *MainController) Alert() {
     }
 	maplens=maplens+1
 	qs.SetCond(cond1).Limit(25, 25*(nowpn-1)).All(&maps1)
-
 	c.Data["data"]=maps1
 	maxpagenums:=0
 	if maplens%25==0{
@@ -139,7 +138,7 @@ func (c *MainController) Alert() {
 		c.Data["maxpagenums"]=(maplens/25)+1
 		maxpagenums=(maplens/25)+1
 	}
-	fmt.Println("最大页数",c.Data["maxpagenums"])
+	// fmt.Println("最大页数",c.Data["maxpagenums"])
 	if nowpn==0{
 		nowpn=nowpn+1
 	}
@@ -193,7 +192,6 @@ func (c *MainController) Set() {
 	}else{
 		lowlimit,_:=strconv.Atoi(c.Input().Get("lowlimit"))
 		uplimit,_:=strconv.Atoi(c.Input().Get("uplimit"))
-		fmt.Println(lowlimit,uplimit)
 		if lowlimit>=uplimit||lowlimit==0||uplimit==0{
 			c.Data["messagetype"]="alert-warning"
 			c.Data["message"]="修改失败，请输入正确的上下限！"
