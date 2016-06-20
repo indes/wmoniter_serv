@@ -32,7 +32,7 @@
 
                 chart: {
                     type: 'spline',
-                    animation: Highcharts.svg, // don't animate in old IE
+                    animation: Highcharts.svg,
                     marginRight: 10,
                     events: {
                         load: function () {
@@ -40,17 +40,11 @@
                             // 每秒通过ajax获取新数据
                             var series = this.series[0];
                             setInterval(function () {
-                                $.getJSON('/dev/grtdata', function (data) {
+                                // $.getJSON('/dev/gtdata', function (data) {});
+                                $.getJSON('/data/now', function (data) {
                                     console.log("获取实时数据",data.x,data.y);
                                     series.addPoint([data.x*1000, data.y], true, true);
                                 });
-
-                                //生成每秒随机数据
-                                // var x = (new Date()).getTime(),
-                                //     y = Math.random();
-                                // console.log(x,y);
-                                // series.addPoint([x, y], true, true);
-
                             }, 1000);
                         }
                     }
@@ -73,17 +67,11 @@
                         color: '#808080'
                     }],
                     //警告线
-                    plotLines: [{
-                        color: 'red',            //线的颜色，定义为红色
-                        dashStyle: 'Dot',//标示线的样式，默认是solid（实线），这里定义为长虚线
-                        value: {{.nowuplimit}},                //定义在哪个值上显示标示线，这里是在x轴上刻度为3的值处垂直化一条线
-                        width: 2                 //标示线的宽度，2px
-                    }],
-                    // plotLines:[{
-                    //     color:'yellow',            //线的颜色，定义为红色
-                    //     dashStyle:'Dot',//标示线的样式，默认是solid（实线），这里定义为长虚线
-                    //     value:0.2,                //定义在哪个值上显示标示线，这里是在x轴上刻度为3的值处垂直化一条线
-                    //     width:2                 //标示线的宽度，2px
+                    // plotLines: [{
+                    //     color: 'red',            //线的颜色，定义为红色
+                    //     dashStyle: 'Dot',//标示线的样式，默认是solid（实线），这里定义为长虚线
+                    //     value: {{.nowuplimit}},                //定义在哪个值上显示标示线，这里是在x轴上刻度为3的值处垂直化一条线
+                    //     width: 2                 //标示线的宽度，2px
                     // }],
                 },
                 tooltip: {
@@ -92,12 +80,7 @@
                                 Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
                                 Highcharts.numberFormat(this.y, 2);
                     },
-                    // positioner: function() {
-                    //     return {
-                    //         x: 80,
-                    //         y: 40
-                    //     }
-                    // }
+
                 },
                 legend: {
                     enabled: false
@@ -134,7 +117,6 @@
                                 y: 0
                             });
                         }
-                        // console.log(data);
                         return data;
                     })()
                 }]

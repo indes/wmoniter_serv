@@ -8,12 +8,15 @@ import (
 	_ "math/rand"
 	"wmoniter_serv/models"
     _ "time"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func init() {
     orm.Debug = true
+	// orm.RegisterDriver("sqlite3", orm.DR_Sqlite)
+    // err:=orm.RegisterDataBase("default", "sqlite3", "file:database.db")
 	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", "root:root@(10.64.70.45:3306)/wmoniter?charset=utf8")
+	orm.RegisterDataBase("default", "mysql", "root:root@(localhost:3306)/wmoniter?charset=utf8")
 }
 
 type DatabaseController struct {
@@ -21,7 +24,14 @@ type DatabaseController struct {
 }
 
 func (c *DatabaseController) GetNow(){
-	c.Ctx.WriteString("hello")
+	o := orm.NewOrm()
+	nowdata:=new(models.Data)
+	o.Raw("SELECT * FROM data ORDER BY id DESC LIMIT 1").QueryRow(&nowdata)
+	datamap:=make(map[string]int64)
+	datamap["x"]=nowdata.Date.Unix()+28800
+	datamap["y"]=int64(nowdata.Value)
+	c.Data["json"]=&datamap
+    c.ServeJSON()
 }
 
 func (c *DatabaseController) GetAll() {

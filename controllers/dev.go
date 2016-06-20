@@ -31,18 +31,31 @@ func (c *DevController) GData() {
 	}
 }
 
+func (c *DevController) GTdata() {
+	o := orm.NewOrm()
+	//生成随机数据
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	o.Using("default")
+	orm.RunSyncdb("default", false, true)
+    user := new(models.Data)
+    user.Id = 1
+    user.Date = time.Now().UTC()
+	user.Value = r.Intn(10)
+	o.Insert(user)
+	c.Ctx.WriteString("生成1条随机数据插入到数据库中\n")
+
+}
+
+
 func (c *DevController) GRtimedata() {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-
 	datamap:=make(map[string]int64)
 	datamap["x"]=time.Now().Unix()
 	datamap["y"]=int64(r.Intn(10))
-	//生成实时随机数据
-
-	// rtdata:=[2]int64{time.Now().Unix(),int64(r.Intn(10))}
 	c.Data["json"]=&datamap
     c.ServeJSON()
 }
+
 
 func (c *DevController) Get() {
 	c.Ctx.WriteString("Dev")

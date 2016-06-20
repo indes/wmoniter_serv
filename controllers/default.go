@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"wmoniter_serv/models"
 	"strconv"
-
 )
 
 type Paginator struct {
@@ -21,21 +20,18 @@ type Paginator struct {
 	page      int
 }
 
-func init() {
-
-}
-
 type MainController struct {
 	beego.Controller
 }
 
-
 type RtimeController struct {
 	beego.Controller
 }
+
 type HistorydataController struct {
 	beego.Controller
 }
+
 type DataController struct {
 	beego.Controller
 }
@@ -66,7 +62,7 @@ func (c *MainController) History() {
 
 	qs := o.QueryTable("data")
 	var maps []*models.Data
-	qs.All(&maps)
+	qs.Limit(-1).All(&maps)
 	maplens:=0
     for i,_:=range maps{
 		maplens=i;
@@ -117,30 +113,62 @@ func (c *MainController) History() {
 
 }
 
-
 func (c *MainController) Alert() {
-
+	nowpn,_:=strconv.Atoi(c.Ctx.Input.Param(":pn"))
 	var maps1 []*models.Data
-	// var maps2 []*models.Data
-
-
 	o := orm.NewOrm()
 	nowconf:=new(models.Conf)
 	o.Raw("SELECT * FROM conf WHERE id = 1").QueryRow(&nowconf)
-
 	qs := o.QueryTable("data")
-	qs.Filter("value__gt", 8).Limit(20, 30).All(&maps1)
-	// qs.Filter("value__gt", nowconf.Lowlimit).Limit(20, 30).All(&maps2)
-
-	fmt.Println(maps1)
-	for i,j:=range maps1{
-		fmt.Println(i,j)
+	cond := orm.NewCondition()
+	cond1 := cond.And("value__gt", nowconf.Uplimit).Or("value__lt", nowconf.Lowlimit)
+	qs.SetCond(cond1).All(&maps1)
+	maplens:=0
+    for i,_:=range maps1{
+		maplens=i;
     }
+	maplens=maplens+1
+	qs.SetCond(cond1).Limit(25, 25*(nowpn-1)).All(&maps1)
+
+	c.Data["data"]=maps1
+	maxpagenums:=0
+	if maplens%25==0{
+		c.Data["maxpagenums"]=maplens/25
+		maxpagenums=maplens/25
+	}else{
+		c.Data["maxpagenums"]=(maplens/25)+1
+		maxpagenums=(maplens/25)+1
+	}
+	fmt.Println("最大页数",c.Data["maxpagenums"])
+	if nowpn==0{
+		nowpn=nowpn+1
+	}
+	var pn1 [5]int
+	if nowpn<=3{
+		for i:=0;i<5;i++{
+			pn1[i]=i+1
+		}
+	}else{
+		if (nowpn+3)>maxpagenums{
+			for i:=0;i<5;i++{
+				pn1[i]=maxpagenums-4+i
+			}
+		}else{
+			pn1[0]=nowpn-2
+			pn1[1]=nowpn-1
+			pn1[2]=nowpn
+			pn1[3]=nowpn+1
+			pn1[4]=nowpn+2
+		}
+	}
+	c.Data["pn1"]=pn1
+	c.Data["nowpn"]=nowpn
+	c.Data["data"]=maps1
 	c.Data["nowuplimit"]=nowconf.Uplimit
 	c.Data["nowlowlimit"]=nowconf.Lowlimit
-	c.Data["IsHistory"]=1
+	c.Data["IsAlert"]=1
 	c.Data["pagetitle"]="报警记录"
-	c.Ctx.WriteString("历史数据")
+	c.TplName="alert.tpl"
 }
 
 func (c *MainController) Settings() {
@@ -175,7 +203,6 @@ func (c *MainController) Set() {
 			c.Data["message"]="修改上下限成功！"
 		}
 	}
-
 	nowconf:=new(models.Conf)
 	o.Raw("SELECT * FROM conf WHERE id = 1").QueryRow(&nowconf)
 	c.Data["nowuplimit"]=nowconf.Uplimit
