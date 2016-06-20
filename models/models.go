@@ -7,7 +7,8 @@ import (
 
 type Conf struct {
 	Id    int
-	Value int
+	Lowlimit int
+	Uplimit int
 }
 
 type Data struct {
